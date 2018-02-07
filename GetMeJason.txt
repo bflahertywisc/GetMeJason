@@ -1,0 +1,114 @@
+//Get Me Jason ++
+javascript: 
+var url = window.location.toString();
+var context = "";
+var hostname = "";
+if(url.indexOf('zendesk.com/agent') > -1) {
+	hostname = window.location.hostname;
+	if(url.indexOf('/tickets/') > -1){
+		context = "ticket";
+	}
+	if(url.indexOf('/users/') > -1){
+		context = "user";
+	} 
+	if(url.indexOf('/triggers/') > -1){
+		context = "trigger";
+	}
+	if(url.indexOf('/triggers?') > -1){
+		context = "triggers";
+	}
+	if(url.indexOf('/macros/') > -1){
+		context = "macro";
+	}
+	if(url.indexOf('/macros?') > -1){
+		context = "macros";
+	}
+	if(url.indexOf('/views?') > -1){
+		context = "views";
+	}
+	if(url.indexOf('/views/') > -1){
+		context = "view";
+	}
+	if(url.indexOf('/ticket_fields') > -1){
+		context = "ticket_fields";
+	}
+	if(url.indexOf('/ticket_forms') > -1){
+		context = "ticket_forms";
+	}
+	if(url.indexOf('/ticket_forms/edit/') > -1){
+		context = "ticket_form";
+	}	
+}
+else{
+	hostname = prompt('Enter Zendesk subdomain:') + '.zendesk.com';
+}
+if (context == ""){
+	var context = prompt('I do not understand the context.  What would you like?');
+}
+switch (context) {
+	case "ticket":
+	var n = url.lastIndexOf('/');  var id = url.substring(n + 1);
+	window.open('https://' + hostname + '/api/v2/tickets/' + id +'.json?include=users,groups,organizations,last_audits,metric_sets,dates,sharing_agreements,comment_counts,incident_counts,ticket_forms,metric_events,slas' ,'_blank');
+	window.open('https://' + hostname + '/api/v2/tickets/' + id +'/audits.json','_blank');
+	window.open('https://' + hostname + '/api/v2/tickets/' + id +'/comments.json','_blank');
+	break;
+
+	case "user":
+	var pathArray = window.location.pathname.split( '/' );
+	var id = pathArray[pathArray.length - 2];
+	window.open('https://' + hostname + '/api/v2/users/' + id +'.json?include=groups,organizations,abilities,roles,identities,open_ticket_count' ,'_blank');
+	break;
+
+	case "trigger":
+	var pathArray = window.location.pathname.split( '/' );
+	var n = url.lastIndexOf('/');  var id = url.substring(n + 1);
+	window.open('https://' + hostname + '/api/v2/triggers/' + id +'.json?include=app_installation,permissions,usage_1h,usage_24h,usage_7d,usage_30d' ,'_blank');
+	break;
+
+	case "triggers":
+	var pathArray = window.location.pathname.split( '/' );
+	window.open('https://' + hostname + '/api/v2/triggers.json?include=app_installation,permissions,usage_1h,usage_24h,usage_7d,usage_30d' ,'_blank');
+	break;
+
+	case "macro":
+	var pathArray = window.location.pathname.split( '/' );
+	var n = url.lastIndexOf('/');  var id = url.substring(n + 1);
+	window.open('https://' + hostname + '/api/v2/macros/' + id +'.json?include=app_installation,permissions,usage_1h,usage_24h,usage_7d,usage_30d' ,'_blank');
+	break;
+
+	case "macros":
+	var pathArray = window.location.pathname.split( '/' );
+	window.open('https://' + hostname + '/api/v2/macros.json?include=app_installation,permissions,usage_1h,usage_24h,usage_7d,usage_30d' ,'_blank');
+	break;
+
+	case "views":
+	var pathArray = window.location.pathname.split( '/' );
+	window.open('https://' + hostname + '/api/v2/views.json?include=app_installation,permissions,usage_1h,usage_24h,usage_7d,usage_30d' ,'_blank');
+	break;
+
+	case "view":
+	var pathArray = window.location.pathname.split( '/' );
+	var n = url.lastIndexOf('/');  var id = url.substring(n + 1);
+	window.open('https://' + hostname + '/api/v2/views/' + id +'.json?include=app_installation,permissions,usage_1h,usage_24h,usage_7d,usage_30d' ,'_blank');
+	break;
+
+	case "ticket_fields":
+	var pathArray = window.location.pathname.split( '/' );
+	window.open('https://' + hostname + '/api/v2/ticket_fields.json' ,'_blank');
+	break;
+
+	case "ticket_forms":
+	var pathArray = window.location.pathname.split( '/' );
+	window.open('https://' + hostname + '/api/v2/ticket_forms.json' ,'_blank');
+	break;
+
+	case "ticket_form":
+	var pathArray = window.location.pathname.split( '/' );
+	var n = url.lastIndexOf('/');  var id = url.substring(n + 1);
+	window.open('https://' + hostname + '/api/v2/ticket_forms/' + id +'.json?' ,'_blank');
+	break;
+
+	case "":
+
+	break;
+}
