@@ -1,67 +1,114 @@
-//Get Me Jason ++
 javascript: 
 var url = window.location.toString();
+var location ="";
 var context = "";
 var hostname = "";
-if(url.indexOf('zendesk.com/agent') > -1) {
+var selectText = "";
+var autoDetected = false;
+
+
+if(url.indexOf('zendesk.com') > -1) {
 	hostname = window.location.hostname;
-	if(url.indexOf('/tickets/') > -1){
-		context = "ticket";
+
+	if(url.indexOf('.json') > -1){
+		selectText = document.getSelection().toString();
+		selectArray = selectText.split(':');
+		switch (selectArray[0]){
+			case "requester_id":
+			var id = selectArray[1].trim();
+			window.open('https://' + hostname + '/api/v2/users/' + id +'.json?include=groups,organizations,abilities,roles,identities,open_ticket_count' ,'_blank');
+			break;
+		}
 	}
-	if(url.indexOf('/users/') > -1){
-		context = "user";
-	} 
-	if(url.indexOf('/triggers/') > -1){
-		context = "trigger";
+	else{
+		if(url.indexOf('/tickets/') > -1){
+			context = "ticket";
+			autoDetected = true;
+		}
+		if(url.indexOf('/users/') > -1){
+			context = "user";
+			autoDetected = true;
+		} 
+		if(url.indexOf('/triggers/') > -1){
+			context = "trigger";
+			autoDetected = true;
+		}
+		if(url.indexOf('/triggers?') > -1){
+			context = "triggers";
+			autoDetected = true;
+		}
+		if(url.indexOf('/macros/') > -1){
+			context = "macro";
+			autoDetected = true;
+		}
+		if(url.indexOf('/macros?') > -1){
+			context = "macros";
+			autoDetected = true;
+		}
+		if(url.indexOf('/views?') > -1){
+			context = "views";
+			autoDetected = true;
+		}
+		if(url.indexOf('/views/') > -1){
+			context = "view";
+			autoDetected = true;
+		}
+		if(url.indexOf('/ticket_fields') > -1){
+			context = "ticket_fields";
+			autoDetected = true;
+		}
+		if(url.indexOf('/ticket_forms') > -1){
+			context = "ticket_forms";
+			autoDetected = true;
+		}
+		if(url.indexOf('/ticket_forms/edit/') > -1){
+			context = "ticket_form";
+			autoDetected = true;
+		}	
 	}
-	if(url.indexOf('/triggers?') > -1){
-		context = "triggers";
-	}
-	if(url.indexOf('/macros/') > -1){
-		context = "macro";
-	}
-	if(url.indexOf('/macros?') > -1){
-		context = "macros";
-	}
-	if(url.indexOf('/views?') > -1){
-		context = "views";
-	}
-	if(url.indexOf('/views/') > -1){
-		context = "view";
-	}
-	if(url.indexOf('/ticket_fields') > -1){
-		context = "ticket_fields";
-	}
-	if(url.indexOf('/ticket_forms') > -1){
-		context = "ticket_forms";
-	}
-	if(url.indexOf('/ticket_forms/edit/') > -1){
-		context = "ticket_form";
-	}	
+
 }
 else{
 	hostname = prompt('Enter Zendesk subdomain:') + '.zendesk.com';
 }
+
+
+
 if (context == ""){
 	var context = prompt('I do not understand the context.  What would you like?');
 }
 switch (context) {
 	case "ticket":
-	var n = url.lastIndexOf('/');  var id = url.substring(n + 1);
+	if(autoDetected){
+		var n = url.lastIndexOf('/');  var id = url.substring(n + 1);
+	}
+	else{
+		var id = prompt('Ticket ID?');
+	}
 	window.open('https://' + hostname + '/api/v2/tickets/' + id +'.json?include=users,groups,organizations,last_audits,metric_sets,dates,sharing_agreements,comment_counts,incident_counts,ticket_forms,metric_events,slas' ,'_blank');
 	window.open('https://' + hostname + '/api/v2/tickets/' + id +'/audits.json','_blank');
 	window.open('https://' + hostname + '/api/v2/tickets/' + id +'/comments.json','_blank');
 	break;
 
 	case "user":
-	var pathArray = window.location.pathname.split( '/' );
-	var id = pathArray[pathArray.length - 2];
+	if(autoDetected){
+		var pathArray = window.location.pathname.split( '/' );
+		var id = pathArray[pathArray.length - 2];
+	}
+	else{
+		var id = prompt('User ID?');
+	}
 	window.open('https://' + hostname + '/api/v2/users/' + id +'.json?include=groups,organizations,abilities,roles,identities,open_ticket_count' ,'_blank');
 	break;
 
 	case "trigger":
-	var pathArray = window.location.pathname.split( '/' );
-	var n = url.lastIndexOf('/');  var id = url.substring(n + 1);
+	if(autoDetected){
+		var pathArray = window.location.pathname.split( '/' );
+		var n = url.lastIndexOf('/');  var id = url.substring(n + 1);
+	}
+	else{
+		var id = prompt('Trigger ID?');
+	}
 	window.open('https://' + hostname + '/api/v2/triggers/' + id +'.json?include=app_installation,permissions,usage_1h,usage_24h,usage_7d,usage_30d' ,'_blank');
 	break;
 
@@ -71,8 +118,13 @@ switch (context) {
 	break;
 
 	case "macro":
-	var pathArray = window.location.pathname.split( '/' );
-	var n = url.lastIndexOf('/');  var id = url.substring(n + 1);
+	if(autoDetected){
+		var pathArray = window.location.pathname.split( '/' );
+		var n = url.lastIndexOf('/');  var id = url.substring(n + 1);
+	}
+	else{
+		var id = prompt('Macro ID?');
+	}
 	window.open('https://' + hostname + '/api/v2/macros/' + id +'.json?include=app_installation,permissions,usage_1h,usage_24h,usage_7d,usage_30d' ,'_blank');
 	break;
 
@@ -83,13 +135,18 @@ switch (context) {
 
 	case "views":
 	var pathArray = window.location.pathname.split( '/' );
-	window.open('https://' + hostname + '/api/v2/views.json?include=app_installation,permissions,usage_1h,usage_24h,usage_7d,usage_30d' ,'_blank');
+	window.open('https://' + hostname + '/api/v2/views.json?include=app_installation,permissions' ,'_blank');
 	break;
 
 	case "view":
-	var pathArray = window.location.pathname.split( '/' );
-	var n = url.lastIndexOf('/');  var id = url.substring(n + 1);
-	window.open('https://' + hostname + '/api/v2/views/' + id +'.json?include=app_installation,permissions,usage_1h,usage_24h,usage_7d,usage_30d' ,'_blank');
+	if(autoDetected){
+		var pathArray = window.location.pathname.split( '/' );
+		var n = url.lastIndexOf('/');  var id = url.substring(n + 1);
+	}
+	else{
+		var id = prompt('View ID?');
+	}	
+	window.open('https://' + hostname + '/api/v2/views/' + id +'.json?include=app_installation,permissions' ,'_blank');
 	break;
 
 	case "ticket_fields":
@@ -103,8 +160,13 @@ switch (context) {
 	break;
 
 	case "ticket_form":
-	var pathArray = window.location.pathname.split( '/' );
-	var n = url.lastIndexOf('/');  var id = url.substring(n + 1);
+	if(autoDetected){
+		var pathArray = window.location.pathname.split( '/' );
+		var n = url.lastIndexOf('/');  var id = url.substring(n + 1);
+	}
+	else{
+		var id = prompt('Ticket Form ID?');
+	}
 	window.open('https://' + hostname + '/api/v2/ticket_forms/' + id +'.json?' ,'_blank');
 	break;
 
@@ -112,3 +174,6 @@ switch (context) {
 
 	break;
 }
+
+
+
