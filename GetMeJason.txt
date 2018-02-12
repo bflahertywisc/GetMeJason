@@ -10,16 +10,64 @@ var autoDetected = false;
 if(url.indexOf('zendesk.com') > -1) {
 	hostname = window.location.hostname;
 
-	if(url.indexOf('.json') > -1){
-		selectText = document.getSelection().toString();
-		selectArray = selectText.split(':');
-		switch (selectArray[0]){
-			case "requester_id":
-			var id = selectArray[1].trim();
-			window.open('https://' + hostname + '/api/v2/users/' + id +'.json?include=groups,organizations,abilities,roles,identities,open_ticket_count' ,'_blank');
-			break;
+	if(url.indexOf('api/v2') > -1){
+		context = "json";
+		selectedText = document.getSelection().toString();
+		console.log(selectText.length);
+		if (selectedText.length>0){
+			selectArray = selectText.split(':');
+			switch (selectArray[0]){
+				case "requester_id":
+				var id = selectArray[1].trim();
+				window.open('https://' + hostname + '/api/v2/users/' + id +'.json?include=groups,organizations,abilities,roles,identities,open_ticket_count' ,'_blank');
+				break;
+			}
+		}
+		else{
+			if(url.indexOf('/tickets/') > -1){
+				if(url.indexOf('/audits.') > -1 || url.indexOf('/comments.') > -1 ){
+					var pathArray = window.location.pathname.split( '/' );
+					var id = pathArray[4];
+					window.open('https://' + hostname + '/agent/tickets/' + id);
+				}
+				else{
+					var pathArray = window.location.pathname.split( '/' );
+					var id = pathArray[4].substring(0,pathArray[4].lastIndexOf('.json'));
+					window.open('https://' + hostname + '/agent/tickets/' + id);
+				}
+			}
+			if(url.indexOf('/users/') > -1){
+				var pathArray = window.location.pathname.split( '/' );
+				var id = pathArray[4].substring(0,pathArray[4].lastIndexOf('.json'));
+				window.open('https://' + hostname + '/agent/users/' + id);
+			}
+			if(url.indexOf('triggers.json') > -1){
+				window.open('https://' + hostname + '/agent/admin/triggers');
+			}
+			if(url.indexOf('/triggers/') > -1){
+				var pathArray = window.location.pathname.split( '/' );
+				var id = pathArray[4].substring(0,pathArray[4].lastIndexOf('.json'));
+				window.open('https://' + hostname + '/agent/admin/triggers/' + id);
+			}
+			if(url.indexOf('macros.json') > -1){
+				window.open('https://' + hostname + '/agent/admin/macros');
+			}
+			if(url.indexOf('/macros/') > -1){
+				var pathArray = window.location.pathname.split( '/' );
+				var id = pathArray[4].substring(0,pathArray[4].lastIndexOf('.json'));
+				window.open('https://' + hostname + '/agent/admin/macros/' + id);
+			}
+			if(url.indexOf('filters.json') > -1){
+				window.open('https://' + hostname + '/agent/admin/filters');
+			}
+			if(url.indexOf('/filters/') > -1){
+				var pathArray = window.location.pathname.split( '/' );
+				var id = pathArray[4].substring(0,pathArray[4].lastIndexOf('.json'));
+				window.open('https://' + hostname + '/agent/admin/filters/' + id);
+			}
 		}
 	}
+
 	else{
 		if(url.indexOf('/tickets/') > -1){
 			context = "ticket";
@@ -171,9 +219,7 @@ switch (context) {
 	break;
 
 	case "":
+	case "json":
 
 	break;
 }
-
-
-
