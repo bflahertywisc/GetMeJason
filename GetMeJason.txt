@@ -3,7 +3,7 @@ var url = window.location.toString();
 var location ="";
 var context = "";
 var hostname = "";
-var selectText = "";
+var selectedText = "";
 var autoDetected = false;
 
 
@@ -13,13 +13,29 @@ if(url.indexOf('zendesk.com') > -1) {
 	if(url.indexOf('api/v2') > -1){
 		context = "json";
 		selectedText = document.getSelection().toString();
-		console.log(selectText.length);
+		console.log(selectedText);
 		if (selectedText.length>0){
-			selectArray = selectText.split(':');
-			switch (selectArray[0]){
+			selectArray = selectedText.split(':');
+			var dataType = selectArray[0];
+			var id = selectArray[1];
+			console.log(id);
+			if (id.charAt(id.length-1)==","){
+				id = id.substring(1,id.length-1);
+			}
+			else{
+				id = id.substring(1,id.length);
+			}
+			switch (dataType){
 				case "requester_id":
-				var id = selectArray[1].trim();
+				case "submitter_id":
+				case "assignee_id":
 				window.open('https://' + hostname + '/api/v2/users/' + id +'.json?include=groups,organizations,abilities,roles,identities,open_ticket_count' ,'_blank');
+				break;
+				case "organization_id":
+				window.open('https://' + hostname + '/api/v2/organizations/' + id +'.json?include=abilities');
+				break;
+				case "group_id":
+				window.open('https://' + hostname + '/api/v2/groups/' + id +'.json');
 				break;
 			}
 		}
@@ -57,13 +73,16 @@ if(url.indexOf('zendesk.com') > -1) {
 				var id = pathArray[4].substring(0,pathArray[4].lastIndexOf('.json'));
 				window.open('https://' + hostname + '/agent/admin/macros/' + id);
 			}
-			if(url.indexOf('filters.json') > -1){
-				window.open('https://' + hostname + '/agent/admin/filters');
+			if(url.indexOf('/ticket_fields') > -1){
+				window.open('https://' + hostname + '/agent/admin/ticket_fields');
 			}
-			if(url.indexOf('/filters/') > -1){
+			if(url.indexOf('/ticket_forms.json') > -1){
+				window.open('https://' + hostname + '/agent/admin/ticket_forms');
+			}
+			if(url.indexOf('/ticket_forms/') > -1){
 				var pathArray = window.location.pathname.split( '/' );
 				var id = pathArray[4].substring(0,pathArray[4].lastIndexOf('.json'));
-				window.open('https://' + hostname + '/agent/admin/filters/' + id);
+				window.open('https://' + hostname + '/agent/admin/ticket_forms/edit/' + id);
 			}
 		}
 	}
@@ -217,9 +236,29 @@ switch (context) {
 	}
 	window.open('https://' + hostname + '/api/v2/ticket_forms/' + id +'.json?' ,'_blank');
 	break;
+	
+	case "organizations":
+	window.open('https://' + hostname + '/api/v2/organizations.json?include=abilities' ,'_blank');
+	break;
 
-	case "":
+	case "organization":
+	var id = prompt('Organization ID?');
+	window.open('https://' + hostname + '/api/v2/organizations/' + id +'.json?include=abilities' ,'_blank');
+	break;
+
+	case "tickets":
+	window.open('https://' + hostname + '/api/v2/tickets' ,'_blank');
+	break;
+
+	case "groups":
+	window.open('https://' + hostname + '/api/v2/groups' ,'_blank');
+	break;
+
+	case "group":
+	var id = prompt('Group ID?');
+	window.open('https://' + hostname + '/api/v2/groups/' + id +'.json' ,'_blank');
+	break;
 	case "json":
-
+	case "":
 	break;
 }
