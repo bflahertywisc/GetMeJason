@@ -25,18 +25,53 @@ if(url.indexOf('zendesk.com') > -1) {
 			else{
 				id = id.substring(1,id.length);
 			}
+			if (id.indexOf('[') > -1){
+				id = id.substring(1,id.length-2);
+			}
 			switch (dataType){
 				case "requester_id":
 				case "submitter_id":
 				case "assignee_id":
+				case "author_id:":
+				case "user_id":
+				case "actor_id":
+				window.open('https://' + hostname + '/api/v2/users/' + id +'/group_memberships.json','_blank');
 				window.open('https://' + hostname + '/api/v2/users/' + id +'.json?include=groups,organizations,abilities,roles,identities,open_ticket_count' ,'_blank');
 				break;
 				case "organization_id":
+				window.open('https://' + hostname + '/api/v2/organizations/' + id +'/related.json' ,'_blank');
 				window.open('https://' + hostname + '/api/v2/organizations/' + id +'.json?include=abilities');
 				break;
 				case "group_id":
+				case "default_group_id":
 				window.open('https://' + hostname + '/api/v2/groups/' + id +'.json');
 				break;
+				case "collaborator_ids":
+				case "follower_ids":
+				case "recipients":
+				window.open('https://' + hostname + '/api/v2/users/show_many.json?ids='+ id);
+				break;
+				case "problem_id":
+				window.open('https://' + hostname + '/api/v2/tickets/' + id +'/audits.json','_blank');
+				window.open('https://' + hostname + '/api/v2/tickets/' + id +'/comments.json','_blank');
+				window.open('https://' + hostname + '/api/v2/tickets/' + id +'.json?include=users,groups,organizations,last_audits,metric_sets,dates,sharing_agreements,comment_counts,incident_counts,ticket_forms,metric_events,slas' ,'_blank');
+				break;
+				case "sharing_agreement_ids":
+				window.open('https://' + hostname + '/api/v2/sharing_agreements/' + id +'.json');
+				break;
+				case "ticket_form_ids":
+				window.open('https://' + hostname + '/api/v2/ticket_forms/show_many.json?ids='+ id);
+				break;
+				case "followup_ids":
+				window.open('https://' + hostname + '/api/v2/tickets/show_many.json?ids='+ id);
+				break;
+				case "ticket_form_id":
+				window.open('https://' + hostname + '/api/v2/ticket_forms/' + id +'.json');
+				break;
+				case "brand_id":
+				window.open('https://' + hostname + '/api/v2/brands/' + id +'.json');
+				break;
+
 			}
 		}
 		else{
@@ -90,6 +125,10 @@ if(url.indexOf('zendesk.com') > -1) {
 	else{
 		if(url.indexOf('/tickets/') > -1){
 			context = "ticket";
+			autoDetected = true;
+		}
+		if(url.indexOf('/filters/') > -1){
+			context = "filters";
 			autoDetected = true;
 		}
 		if(url.indexOf('/users/') > -1){
@@ -152,9 +191,9 @@ switch (context) {
 	else{
 		var id = prompt('Ticket ID?');
 	}
-	window.open('https://' + hostname + '/api/v2/tickets/' + id +'.json?include=users,groups,organizations,last_audits,metric_sets,dates,sharing_agreements,comment_counts,incident_counts,ticket_forms,metric_events,slas' ,'_blank');
 	window.open('https://' + hostname + '/api/v2/tickets/' + id +'/audits.json','_blank');
 	window.open('https://' + hostname + '/api/v2/tickets/' + id +'/comments.json','_blank');
+	window.open('https://' + hostname + '/api/v2/tickets/' + id +'.json?include=users,groups,organizations,last_audits,metric_sets,dates,sharing_agreements,comment_counts,incident_counts,ticket_forms,metric_events,slas' ,'_blank');
 	break;
 
 	case "user":
@@ -165,6 +204,7 @@ switch (context) {
 	else{
 		var id = prompt('User ID?');
 	}
+	window.open('https://' + hostname + '/api/v2/users/' + id +'/group_memberships.json','_blank');
 	window.open('https://' + hostname + '/api/v2/users/' + id +'.json?include=groups,organizations,abilities,roles,identities,open_ticket_count' ,'_blank');
 	break;
 
@@ -180,7 +220,6 @@ switch (context) {
 	break;
 
 	case "triggers":
-	var pathArray = window.location.pathname.split( '/' );
 	window.open('https://' + hostname + '/api/v2/triggers.json?include=app_installation,permissions,usage_1h,usage_24h,usage_7d,usage_30d' ,'_blank');
 	break;
 
@@ -196,15 +235,56 @@ switch (context) {
 	break;
 
 	case "macros":
-	var pathArray = window.location.pathname.split( '/' );
 	window.open('https://' + hostname + '/api/v2/macros.json?include=app_installation,permissions,usage_1h,usage_24h,usage_7d,usage_30d' ,'_blank');
 	break;
 
+	case "slas":
+	window.open('https://' + hostname + '/api/v2/slas/policies' ,'_blank');
+	break;
+
+
+	case "target":
+	var id = prompt('Target ID?');
+	window.open('https://' + hostname + '/api/v2/targets/' + id,'_blank');
+	break;
+
+	case "targets":
+	window.open('https://' + hostname + '/api/v2/targets.json' ,'_blank');
+	break;
+
+	case "target failure":
+	case "target_failure":
+	var id = prompt('Target Failure ID?');
+	window.open('https://' + hostname + '/api/v2/target_failures/' + id,'_blank');
+	break;
+
+	case "target failures":
+	case "target_failures":
+	window.open('https://' + hostname + '/api/v2/target_failures.json' ,'_blank');
+	break;
+
+	case "audit log":
+	case "audit_log":
+	case "audit":
+	var id = prompt('Audit Log ID?');
+	window.open('https://' + hostname + '/api/v2/audit_logs/' + id,'_blank');
+	break;
+
+	case "audit logs":
+	case "audit_logs":
+	case "audits":
+	window.open('https://' + hostname + '/api/v2/audit_logs.json' ,'_blank');
+	break;
+
+	case "sla":
+	var id = prompt('sla');
+	window.open('https://' + hostname + '/api/v2/slas/policies' + id,'_blank');
+
 	case "views":
-	var pathArray = window.location.pathname.split( '/' );
 	window.open('https://' + hostname + '/api/v2/views.json?include=app_installation,permissions' ,'_blank');
 	break;
 
+	case "filters"
 	case "view":
 	if(autoDetected){
 		var pathArray = window.location.pathname.split( '/' );
@@ -217,12 +297,17 @@ switch (context) {
 	break;
 
 	case "ticket_fields":
-	var pathArray = window.location.pathname.split( '/' );
+	case "ticket fields":
 	window.open('https://' + hostname + '/api/v2/ticket_fields.json' ,'_blank');
 	break;
 
+	case "ticket field":
+	case "ticket_field":
+	var id = prompt('Ticket Field ID?');
+	window.open('https://' + hostname + '/api/v2/ticket_fields/' + id,'_blank');
+	break;
+
 	case "ticket_forms":
-	var pathArray = window.location.pathname.split( '/' );
 	window.open('https://' + hostname + '/api/v2/ticket_forms.json' ,'_blank');
 	break;
 
@@ -236,22 +321,167 @@ switch (context) {
 	}
 	window.open('https://' + hostname + '/api/v2/ticket_forms/' + id +'.json?' ,'_blank');
 	break;
-	
-	case "organizations":
-	window.open('https://' + hostname + '/api/v2/organizations.json?include=abilities' ,'_blank');
+
+	case "sessions":
+	window.open('https://' + hostname + '/api/v2/sessions.json' ,'_blank');
+	break;
+
+	case "settings":
+	window.open('https://' + hostname + '/api/v2/account/settings.json' ,'_blank');
 	break;
 
 	case "organization":
 	var id = prompt('Organization ID?');
+	window.open('https://' + hostname + '/api/v2/organizations/' + id +'/related.json' ,'_blank');
 	window.open('https://' + hostname + '/api/v2/organizations/' + id +'.json?include=abilities' ,'_blank');
+	break;
+
+	case "organizations":
+	window.open('https://' + hostname + '/api/v2/organizations.json?include=abilities' ,'_blank');
 	break;
 
 	case "tickets":
 	window.open('https://' + hostname + '/api/v2/tickets' ,'_blank');
 	break;
 
+	case "attachment":
+	var id = prompt('Attachment ID?');
+	window.open('https://' + hostname + '/api/v2/attachments/' + id ,'_blank');
+	break;
+
 	case "groups":
 	window.open('https://' + hostname + '/api/v2/groups' ,'_blank');
+	break;
+
+	case "suspended tickets":
+	case "suspended_tickets":
+	window.open('https://' + hostname + '/api/v2/suspended_tickets' ,'_blank');
+	break;
+
+	case "suspended ticket":
+	case "suspended_ticket":
+	var id = prompt('Suspended ticket ID?');
+	window.open('https://' + hostname + '/api/v2/suspended_tickets/' + id +'.json' ,'_blank');
+	break;
+
+	case "oauth clients":
+	case "oauth_clients":
+	window.open('https://' + hostname + '/api/v2/oauth/clients' ,'_blank');
+	break;
+
+	case "oauth client":
+	case "oauth_client":
+	var id = prompt('Oauth client ID?');
+	window.open('https://' + hostname + '/api/v2/oauth/clients/' + id +'.json' ,'_blank');
+	break;
+
+	case "oauth tokens":
+	case "oauth_tokens":
+	window.open('https://' + hostname + '/api/v2/oauth/tokens' ,'_blank');
+	break;
+
+	case "oauth token":
+	case "oauth_token":
+	var id = prompt('Oauth token ID?');
+	window.open('https://' + hostname + '/api/v2/oauth/tokens/' + id +'.json' ,'_blank');
+	break;
+
+	case "oauth global clients":
+	case "oauth_global_clients":
+	window.open('https://' + hostname + '/api/v2/oauth/global_clients.json' ,'_blank');
+	break;
+
+	case "brand":
+	var id = prompt('brand ID?');
+	window.open('https://' + hostname + '/api/v2/brands/' + id,'_blank');
+	break;
+
+	case "brands":
+	window.open('https://' + hostname + '/api/v2/brands.json' ,'_blank');
+	break;
+
+	case "schedule":
+	var id = prompt('schedule ID?');
+	window.open('https://' + hostname + '/api/v2/schedules/' + id,'_blank');
+	break;
+
+	case "schedules":
+	window.open('https://' + hostname + '/api/v2/schedules.json' ,'_blank');
+	break;
+
+	case "locale":
+	var id = prompt('locale ID?');
+	window.open('https://' + hostname + '/api/v2/locales/' + id,'_blank');
+	break;
+
+	case "locales":
+	window.open('https://' + hostname + '/api/v2/locales.json' ,'_blank');
+	break;
+
+	case "dynamic content":
+	case "dynamic_content":
+	var id = prompt('dynamic content ID?');
+	window.open('https://' + hostname + '/api/v2/dynamic_content/items/' + id,'_blank');
+	break;
+
+	case "dynamic contents":
+	case "dynamic_contents":
+	window.open('https://' + hostname + '/api/v2/dynamic_content/items.json' ,'_blank');
+	break;
+
+	case "sharing agreement":
+	case "sharing_agreement":
+	var id = prompt('sharing agreement ID?');
+	window.open('https://' + hostname + '/api/v2/sharing_agreements/' + id,'_blank');
+	break;
+
+	case "sharing agreements":
+	case "sharing_agreements":
+	window.open('https://' + hostname + '/api/v2/sharing_agreements.json' ,'_blank');
+	break;
+
+	case "organization field":
+	case "organization_field":
+	var id = prompt('organization field ID?');
+	window.open('https://' + hostname + '/api/v2/organization_fields/' + id,'_blank');
+	break;
+
+	case "organization fields":
+	case "organization_fields":
+	window.open('https://' + hostname + '/api/v2/organization_fields.json' ,'_blank');
+	break;
+
+	case "user field":
+	case "user_field":
+	var id = prompt('user field ID?');
+	window.open('https://' + hostname + '/api/v2/user_fields/' + id,'_blank');
+	break;
+
+	case "user fields":
+	case "user_fields":
+	window.open('https://' + hostname + '/api/v2/user_fields.json' ,'_blank');
+	break;
+
+	case "resource collection":
+	case "resource_collection":
+	var id = prompt('resource collection ID?');
+	window.open('https://' + hostname + '/api/v2/resource_collections/' + id,'_blank');
+	break;
+
+	case "resource collections":
+	case "resource_collections":
+	window.open('https://' + hostname + '/api/v2/resource_collections.json' ,'_blank');
+	break;	
+
+	case "support address":
+	case "support_address":
+	var id = prompt('support address ID?');
+	window.open('https://' + hostname + '/api/v2/recipient_addresses/' + id,'_blank');
+	break;
+
+	case "support addresses":
+	case "support_addresses":
+	window.open('https://' + hostname + '/api/v2/recipient_addresses.json' ,'_blank');
 	break;
 
 	case "group":
