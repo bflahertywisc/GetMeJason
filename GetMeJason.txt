@@ -223,6 +223,22 @@ switch (context) {
 	window.open('https://' + hostname + '/api/v2/triggers.json?include=app_installation,permissions,usage_1h,usage_24h,usage_7d,usage_30d' ,'_blank');
 	break;
 
+	case "automation":
+	if(autoDetected){
+		var pathArray = window.location.pathname.split( '/' );
+		var n = url.lastIndexOf('/');  var id = url.substring(n + 1);
+	}
+	else{
+		var id = prompt('Automation ID?');
+	}
+	window.open('https://' + hostname + '/api/v2/automations/' + id +'.json?include=app_installation,permissions,usage_1h,usage_24h,usage_7d,usage_30d' ,'_blank');
+	break;
+
+	case "automations":
+	window.open('https://' + hostname + '/api/v2/automations.json?include=app_installation,permissions,usage_1h,usage_24h,usage_7d,usage_30d' ,'_blank');
+	break;
+
+
 	case "macro":
 	if(autoDetected){
 		var pathArray = window.location.pathname.split( '/' );
@@ -284,7 +300,7 @@ switch (context) {
 	window.open('https://' + hostname + '/api/v2/views.json?include=app_installation,permissions' ,'_blank');
 	break;
 
-	case "filters"
+	case "filters":
 	case "view":
 	if(autoDetected){
 		var pathArray = window.location.pathname.split( '/' );
